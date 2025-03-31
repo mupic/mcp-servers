@@ -108,6 +108,10 @@ const WriteFileArgsSchema = z.object({
   content: z.string(),
 });
 
+const CreateFileArgsSchema = z.object({
+  path: z.string(),
+});
+
 const EditOperation = z.object({
   oldText: z.string().describe('Text to search for - must match exactly'),
   newText: z.string().describe('Text to replace with')
@@ -364,7 +368,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: "create_file",
         description: "Create a new file with zero length.",
-        inputSchema: zodToJsonSchema(CreateEmptyFileArgsSchema) as ToolInput,
+        inputSchema: zodToJsonSchema(CreateFileArgsSchema) as ToolInput,
       },
       {
         name: "edit_file",
@@ -497,7 +501,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "create_file": {
-        const parsed = WriteFileArgsSchema.safeParse(args);
+        const parsed = CreateFileArgsSchema.safeParse(args);
         if (!parsed.success) {
           throw new Error(`Invalid arguments for create_file: ${parsed.error}`);
         }

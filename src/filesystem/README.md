@@ -36,6 +36,11 @@ Node.js server implementing Model Context Protocol (MCP) for filesystem operatio
     - `path` (string): File location
     - `content` (string): File content
 
+- **create_empty_file**
+  - Create a new empty file
+  - Inputs:
+    - `path` (string): File location
+
 - **edit_file**
   - Make selective edits using advanced pattern matching and formatting
   - Features:

@@ -362,6 +362,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: zodToJsonSchema(WriteFileArgsSchema) as ToolInput,
       },
       {
+        name: "create_file",
+        description: "Create a new file with zero length.",
+        inputSchema: zodToJsonSchema(CreateEmptyFileArgsSchema) as ToolInput,
+      },
+      {
         name: "edit_file",
         description:
           "Make line-based edits to a text file. Each edit replaces exact line sequences " +
@@ -491,6 +496,18 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
+      case "create_file": {
+        const parsed = WriteFileArgsSchema.safeParse(args);
+        if (!parsed.success) {
+          throw new Error(`Invalid arguments for create_file: ${parsed.error}`);
+        }
+        const validPath = await validatePath(parsed.data.path);
+        await fs.writeFile(validPath, "", "utf-8");
+        return {
+          content: [{ type: "text", text: `Successfully created file at ${parsed.data.path}` }],
+        };
+      }
+        
       case "edit_file": {
         const parsed = EditFileArgsSchema.safeParse(args);
         if (!parsed.success) {
